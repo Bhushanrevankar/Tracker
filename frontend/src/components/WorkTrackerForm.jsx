@@ -10,13 +10,12 @@ import TypeOfWorkField from './fields/TypeOfWorkField';
 import StatusField from './fields/StatusField';
 import RemarksField from './fields/RemarksField';
 import ProductiveMinutesField from './fields/ProductiveMinutesField';
-import { STATUS_IN_PROGRESS } from '../constants/statuses';
 import { getTodayDateString } from '../utils/date';
 import { getLastEmployee, saveEmployeeSelection } from '../utils/employeeStorage';
 import { calculateProductiveMinutes, isValidTimecode } from '../utils/timecode';
 import {
   entryToFormFields,
-  fetchLatestInProgressEntry,
+  fetchLatestActiveSession,
   submitFinalLog,
   submitWorkEntry,
 } from '../utils/workEntries';
@@ -33,7 +32,7 @@ function buildMorningDefaults(employeeName = getLastEmployee()) {
     typeOfWork: '',
     endTimeCode: '',
     logoutTime: '',
-    status: STATUS_IN_PROGRESS,
+    status: '',
     remarks: '',
   };
 }
@@ -57,7 +56,7 @@ export default function WorkTrackerForm() {
     setLoadingSession(true);
     setSubmitError('');
 
-    const { data, error } = await fetchLatestInProgressEntry(employeeName);
+    const { data, error } = await fetchLatestActiveSession(employeeName);
 
     if (cancelledRef.current) return;
 
@@ -73,12 +72,7 @@ export default function WorkTrackerForm() {
     if (data) {
       setIsLogoutMode(true);
       setActiveEntryId(data.id);
-      setFormData({
-        ...entryToFormFields(data),
-        endTimeCode: '',
-        logoutTime: '',
-        remarks: '',
-      });
+      setFormData(entryToFormFields(data));
     } else {
       setIsLogoutMode(false);
       setActiveEntryId(null);
@@ -170,12 +164,7 @@ export default function WorkTrackerForm() {
     if (entry) {
       setActiveEntryId(entry.id);
       setIsLogoutMode(true);
-      setFormData({
-        ...entryToFormFields(entry),
-        endTimeCode: '',
-        logoutTime: '',
-        remarks: '',
-      });
+      setFormData(entryToFormFields(entry));
     }
 
     setSubmitSuccess(

@@ -1,4 +1,4 @@
-import { STATUS_IN_PROGRESS } from '../constants/statuses';
+import { SESSION_ACTIVE, SESSION_INACTIVE } from '../constants/sessions';
 import { supabase } from './supabase';
 
 export const WORK_ENTRIES_TABLE = 'work_entries';
@@ -13,7 +13,8 @@ export function formDataToInsertRow(formData) {
     start_time_code: formData.startTimeCode,
     languages: formData.languages,
     type_of_work: formData.typeOfWork,
-    status: STATUS_IN_PROGRESS,
+    session: SESSION_ACTIVE,
+    status: null,
   };
 }
 
@@ -27,7 +28,7 @@ export function entryToFormFields(entry) {
     startTimeCode: entry.start_time_code,
     languages: entry.languages,
     typeOfWork: entry.type_of_work,
-    status: entry.status ?? STATUS_IN_PROGRESS,
+    status: entry.status ?? '',
     endTimeCode: entry.end_time_code ?? '',
     logoutTime: entry.logout_time ?? '',
     remarks: entry.remarks ?? '',
@@ -41,10 +42,11 @@ export function logoutDataToUpdate(formData, productiveMinutes) {
     productive_minutes: productiveMinutes,
     status: formData.status,
     remarks: formData.remarks?.trim() || null,
+    session: SESSION_INACTIVE,
   };
 }
 
-/** Morning: POST new row with status In Progress */
+/** Morning: POST new row with session active */
 export async function submitWorkEntry(formData) {
   const { data, error } = await supabase
     .from(WORK_ENTRIES_TABLE)
@@ -54,13 +56,13 @@ export async function submitWorkEntry(formData) {
   return { data, error };
 }
 
-/** Evening: fetch open session for employee */
-export async function fetchLatestInProgressEntry(employeeName) {
+/** Evening: fetch open session for employee (session = active only) */
+export async function fetchLatestActiveSession(employeeName) {
   const { data, error } = await supabase
     .from(WORK_ENTRIES_TABLE)
     .select('*')
     .eq('employee_name', employeeName)
-    .eq('status', STATUS_IN_PROGRESS)
+    .eq('session', SESSION_ACTIVE)
     .order('created_at', { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -68,7 +70,7 @@ export async function fetchLatestInProgressEntry(employeeName) {
   return { data, error };
 }
 
-/** Evening: PATCH existing row with logout details */
+/** Evening: PATCH existing row with logout details + session inactive */
 export async function submitFinalLog(entryId, formData, productiveMinutes) {
   const { data, error } = await supabase
     .from(WORK_ENTRIES_TABLE)

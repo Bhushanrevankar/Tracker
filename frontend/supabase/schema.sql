@@ -1,5 +1,4 @@
 -- Run in Supabase: SQL Editor → New query → Run
--- If you already have work_entries from an older schema, run the MIGRATION block at the bottom instead of dropping the table.
 
 -- ---------------------------------------------------------------------------
 -- Fresh install
@@ -14,7 +13,8 @@ create table if not exists public.work_entries (
   start_time_code text not null,
   languages text not null,
   type_of_work text not null,
-  status text not null default 'In Progress',
+  session text not null default 'active',
+  status text,
   end_time_code text,
   logout_time text,
   productive_minutes integer,
@@ -23,8 +23,8 @@ create table if not exists public.work_entries (
   updated_at timestamptz not null default now()
 );
 
-create index if not exists work_entries_employee_status_idx
-  on public.work_entries (employee_name, status, created_at desc);
+create index if not exists work_entries_employee_session_idx
+  on public.work_entries (employee_name, session, created_at desc);
 
 -- Auto-update updated_at on row change
 create or replace function public.set_work_entries_updated_at()
@@ -70,13 +70,24 @@ create policy "Allow public update on work_entries"
   with check (true);
 
 -- ---------------------------------------------------------------------------
--- MIGRATION (only if work_entries already exists without new columns)
+-- MIGRATION (you already have work_entries — run this block)
 -- ---------------------------------------------------------------------------
--- alter table public.work_entries add column if not exists status text not null default 'In Progress';
--- alter table public.work_entries add column if not exists end_time_code text;
--- alter table public.work_entries add column if not exists logout_time text;
--- alter table public.work_entries add column if not exists productive_minutes integer;
--- alter table public.work_entries add column if not exists remarks text;
--- alter table public.work_entries add column if not exists updated_at timestamptz not null default now();
--- create index if not exists work_entries_employee_status_idx on public.work_entries (employee_name, status, created_at desc);
--- (Re-run the trigger, RLS policies, and update policy from above if needed.)
+-- alter table public.work_entries add column if not exists session text;
+--
+-- update public.work_entries
+-- set session = 'inactive'
+-- where logout_time is not null or end_time_code is not null;
+--
+-- update public.work_entries
+-- set session = 'active'
+-- where session is null;
+--
+-- alter table public.work_entries alter column session set not null;
+-- alter table public.work_entries alter column session set default 'active';
+--
+-- alter table public.work_entries alter column status drop not null;
+-- alter table public.work_entries alter column status drop default;
+--
+-- drop index if exists work_entries_employee_status_idx;
+-- create index if not exists work_entries_employee_session_idx
+--   on public.work_entries (employee_name, session, created_at desc);
