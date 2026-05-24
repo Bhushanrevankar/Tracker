@@ -140,8 +140,7 @@ export default function WorkTrackerForm() {
     return null;
   };
 
-  const handleMorningSubmit = async (e) => {
-    e.preventDefault();
+  const handleMorningSubmit = async () => {
     setSubmitError('');
     setSubmitSuccess('');
 
@@ -172,8 +171,7 @@ export default function WorkTrackerForm() {
     );
   };
 
-  const handleFinalSubmit = async (e) => {
-    e.preventDefault();
+  const handleFinalSubmit = async () => {
     setSubmitError('');
     setSubmitSuccess('');
 
@@ -204,10 +202,9 @@ export default function WorkTrackerForm() {
   };
 
   const sessionLocked = isLogoutMode;
-  const handleSubmit = isLogoutMode ? handleFinalSubmit : handleMorningSubmit;
 
   return (
-    <form className="tracker-form" onSubmit={handleSubmit} noValidate>
+    <div className="tracker-layout">
       <EmployeeNameField
         value={formData.employeeName}
         onChange={(value) => updateField('employeeName', value)}
@@ -223,44 +220,45 @@ export default function WorkTrackerForm() {
         </p>
       )}
 
-      <DateField
-        value={formData.date}
-        onChange={(value) => updateField('date', value)}
-        readOnly={sessionLocked}
-      />
-
-      {!isLogoutMode && (
-        <CaptureTimeField
-          id="loginTime"
-          label="Login Time"
-          hint="Click Set Time to capture the current time. This field cannot be edited manually."
-          value={formData.loginTime}
-          onChange={(value) => updateField('loginTime', value)}
-          captureAriaLabel="Set login time to now"
-        />
-      )}
-
-      <ProjectField
-        value={formData.project}
-        onChange={(value) => updateField('project', value)}
-        readOnly={sessionLocked}
-      />
-      <AssignedMovieField
-        value={formData.assignedMovie}
-        onChange={(value) => updateField('assignedMovie', value)}
-        readOnly={sessionLocked}
-      />
-      <TimeCodeField
-        id="startTimeCode"
-        label="Start Time Code"
-        hint="Movie timestamp where dubbing starts (HH:MM:SS)."
-        value={formData.startTimeCode}
-        onChange={(value) => updateField('startTimeCode', value)}
-        readOnly={sessionLocked}
-      />
-
-      {!isLogoutMode && (
-        <>
+      <div className="tracker-panels">
+        <section className="tracker-panel" aria-labelledby="login-section-title">
+          <div className="tracker-panel__head">
+            <h2 id="login-section-title" className="tracker-panel__title">
+              Morning Login
+            </h2>
+            <p className="tracker-panel__subtitle">Start your work session with project details.</p>
+          </div>
+          <DateField
+            value={formData.date}
+            onChange={(value) => updateField('date', value)}
+            readOnly={sessionLocked}
+          />
+          <CaptureTimeField
+            id="loginTime"
+            label="Login Time"
+            hint="Click Set Time to capture the current time. This field cannot be edited manually."
+            value={formData.loginTime}
+            onChange={(value) => updateField('loginTime', value)}
+            captureAriaLabel="Set login time to now"
+          />
+          <ProjectField
+            value={formData.project}
+            onChange={(value) => updateField('project', value)}
+            readOnly={sessionLocked}
+          />
+          <AssignedMovieField
+            value={formData.assignedMovie}
+            onChange={(value) => updateField('assignedMovie', value)}
+            readOnly={sessionLocked}
+          />
+          <TimeCodeField
+            id="startTimeCode"
+            label="Start Time Code"
+            hint="Movie timestamp where dubbing starts (HH:MM:SS)."
+            value={formData.startTimeCode}
+            onChange={(value) => updateField('startTimeCode', value)}
+            readOnly={sessionLocked}
+          />
           <LanguagesField
             value={formData.languages}
             onChange={(value) => updateField('languages', value)}
@@ -269,15 +267,24 @@ export default function WorkTrackerForm() {
             value={formData.typeOfWork}
             onChange={(value) => updateField('typeOfWork', value)}
           />
-        </>
-      )}
-
-      {isLogoutMode && (
-        <section className="form-section" aria-labelledby="logout-section-title">
-          <h2 id="logout-section-title" className="form-section__title">
-            Evening Logout
-          </h2>
-
+          <button
+            type="button"
+            className="form-submit-btn"
+            disabled={submitting || loadingSession || isLogoutMode}
+            onClick={handleMorningSubmit}
+          >
+            {submitting && !isLogoutMode ? 'Saving…' : 'Save Login Details'}
+          </button>
+        </section>
+        <section className="tracker-panel" aria-labelledby="logout-section-title">
+          <div className="tracker-panel__head">
+            <h2 id="logout-section-title" className="tracker-panel__title">
+              Evening Logout
+            </h2>
+            <p className="tracker-panel__subtitle">
+              Close your active session and submit final production details.
+            </p>
+          </div>
           <TimeCodeField
             id="endTimeCode"
             label="End Time Code"
@@ -302,8 +309,16 @@ export default function WorkTrackerForm() {
             value={formData.remarks}
             onChange={(value) => updateField('remarks', value)}
           />
+          <button
+            type="button"
+            className="form-submit-btn"
+            disabled={submitting || loadingSession || !isLogoutMode}
+            onClick={handleFinalSubmit}
+          >
+            {submitting && isLogoutMode ? 'Saving…' : 'Submit Final Log'}
+          </button>
         </section>
-      )}
+      </div>
 
       {submitError && (
         <p className="form-message form-message--error" role="alert">
@@ -315,14 +330,6 @@ export default function WorkTrackerForm() {
           {submitSuccess}
         </p>
       )}
-
-      <button type="submit" className="form-submit-btn" disabled={submitting || loadingSession}>
-        {submitting
-          ? 'Saving…'
-          : isLogoutMode
-            ? 'Submit Final Log'
-            : 'Save Login Details'}
-      </button>
-    </form>
+    </div>
   );
 }
