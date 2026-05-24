@@ -201,7 +201,8 @@ export default function WorkTrackerForm() {
     setActiveEntryId(null);
   };
 
-  const sessionLocked = isLogoutMode;
+  const loginLocked = isLogoutMode || loadingSession;
+  const logoutLocked = !isLogoutMode || loadingSession;
 
   return (
     <div className="tracker-layout">
@@ -221,17 +222,23 @@ export default function WorkTrackerForm() {
       )}
 
       <div className="tracker-panels">
-        <section className="tracker-panel" aria-labelledby="login-section-title">
+        <section
+          className={`tracker-panel${loginLocked ? ' tracker-panel--inactive' : ''}`}
+          aria-labelledby="login-section-title"
+        >
           <div className="tracker-panel__head">
             <h2 id="login-section-title" className="tracker-panel__title">
               Morning Login
             </h2>
             <p className="tracker-panel__subtitle">Start your work session with project details.</p>
+            {loginLocked && isLogoutMode && (
+              <p className="tracker-panel__status">Session active — login details are locked.</p>
+            )}
           </div>
           <DateField
             value={formData.date}
             onChange={(value) => updateField('date', value)}
-            readOnly={sessionLocked}
+            readOnly={loginLocked}
           />
           <CaptureTimeField
             id="loginTime"
@@ -240,16 +247,17 @@ export default function WorkTrackerForm() {
             value={formData.loginTime}
             onChange={(value) => updateField('loginTime', value)}
             captureAriaLabel="Set login time to now"
+            disabled={loginLocked}
           />
           <ProjectField
             value={formData.project}
             onChange={(value) => updateField('project', value)}
-            readOnly={sessionLocked}
+            readOnly={loginLocked}
           />
           <AssignedMovieField
             value={formData.assignedMovie}
             onChange={(value) => updateField('assignedMovie', value)}
-            readOnly={sessionLocked}
+            readOnly={loginLocked}
           />
           <TimeCodeField
             id="startTimeCode"
@@ -257,26 +265,31 @@ export default function WorkTrackerForm() {
             hint="Movie timestamp where dubbing starts (HH:MM:SS)."
             value={formData.startTimeCode}
             onChange={(value) => updateField('startTimeCode', value)}
-            readOnly={sessionLocked}
+            readOnly={loginLocked}
           />
           <LanguagesField
             value={formData.languages}
             onChange={(value) => updateField('languages', value)}
+            readOnly={loginLocked}
           />
           <TypeOfWorkField
             value={formData.typeOfWork}
             onChange={(value) => updateField('typeOfWork', value)}
+            readOnly={loginLocked}
           />
           <button
             type="button"
             className="form-submit-btn"
-            disabled={submitting || loadingSession || isLogoutMode}
+            disabled={submitting || loginLocked}
             onClick={handleMorningSubmit}
           >
             {submitting && !isLogoutMode ? 'Saving…' : 'Save Login Details'}
           </button>
         </section>
-        <section className="tracker-panel" aria-labelledby="logout-section-title">
+        <section
+          className={`tracker-panel${logoutLocked ? ' tracker-panel--inactive' : ''}`}
+          aria-labelledby="logout-section-title"
+        >
           <div className="tracker-panel__head">
             <h2 id="logout-section-title" className="tracker-panel__title">
               Evening Logout
@@ -284,6 +297,9 @@ export default function WorkTrackerForm() {
             <p className="tracker-panel__subtitle">
               Close your active session and submit final production details.
             </p>
+            {logoutLocked && !loadingSession && !isLogoutMode && (
+              <p className="tracker-panel__status">Save morning login first to unlock this section.</p>
+            )}
           </div>
           <TimeCodeField
             id="endTimeCode"
@@ -291,6 +307,7 @@ export default function WorkTrackerForm() {
             hint="Movie timestamp where dubbing ended today (HH:MM:SS)."
             value={formData.endTimeCode}
             onChange={(value) => updateField('endTimeCode', value)}
+            readOnly={logoutLocked}
           />
           <CaptureTimeField
             id="logoutTime"
@@ -299,20 +316,23 @@ export default function WorkTrackerForm() {
             value={formData.logoutTime}
             onChange={(value) => updateField('logoutTime', value)}
             captureAriaLabel="Set logout time to now"
+            disabled={logoutLocked}
           />
           <ProductiveMinutesField value={productiveMinutes} />
           <StatusField
             value={formData.status}
             onChange={(value) => updateField('status', value)}
+            readOnly={logoutLocked}
           />
           <RemarksField
             value={formData.remarks}
             onChange={(value) => updateField('remarks', value)}
+            readOnly={logoutLocked}
           />
           <button
             type="button"
             className="form-submit-btn"
-            disabled={submitting || loadingSession || !isLogoutMode}
+            disabled={submitting || logoutLocked}
             onClick={handleFinalSubmit}
           >
             {submitting && isLogoutMode ? 'Saving…' : 'Submit Final Log'}

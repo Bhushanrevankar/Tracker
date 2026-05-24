@@ -1,6 +1,6 @@
 import { LANGUAGES } from '../../constants/languages';
 
-export default function LanguagesField({ value, onChange }) {
+export default function LanguagesField({ value, onChange, readOnly = false }) {
   return (
     <div className="form-field">
       <label htmlFor="languages" className="form-label">
@@ -15,7 +15,8 @@ export default function LanguagesField({ value, onChange }) {
         className="form-control"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        required
+        disabled={readOnly}
+        required={!readOnly}
       >
         <option value="">Select language…</option>
         {LANGUAGES.map((name) => (

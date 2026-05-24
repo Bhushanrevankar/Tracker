@@ -28,8 +28,10 @@ export default function CaptureTimeField({
   onChange,
   captureLabel = 'Set Time',
   captureAriaLabel,
+  disabled = false,
 }) {
   const handleCapture = () => {
+    if (disabled) return;
     onChange(getCurrentTime12HourString());
   };
 
@@ -57,6 +59,7 @@ export default function CaptureTimeField({
           type="button"
           className="time-capture-btn"
           onClick={handleCapture}
+          disabled={disabled}
           aria-label={captureAriaLabel ?? `Set ${label.toLowerCase()} to now`}
           title={captureLabel}
         >

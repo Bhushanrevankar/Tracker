@@ -1,6 +1,6 @@
 import { WORK_TYPES } from '../../constants/workTypes';
 
-export default function TypeOfWorkField({ value, onChange }) {
+export default function TypeOfWorkField({ value, onChange, readOnly = false }) {
   return (
     <div className="form-field">
       <label htmlFor="typeOfWork" className="form-label">
@@ -15,7 +15,8 @@ export default function TypeOfWorkField({ value, onChange }) {
         className="form-control"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        required
+        disabled={readOnly}
+        required={!readOnly}
       >
         <option value="">Select type of work…</option>
         {WORK_TYPES.map((name) => (

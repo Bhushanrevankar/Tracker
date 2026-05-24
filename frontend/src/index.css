@@ -88,6 +88,25 @@ body {
   color: #667096;
 }
 
+.tracker-panel--inactive {
+  background: rgba(248, 250, 255, 0.88);
+  border-color: rgba(152, 165, 204, 0.2);
+  box-shadow: 0 4px 14px rgba(20, 28, 58, 0.04);
+}
+
+.tracker-panel--inactive .form-label,
+.tracker-panel--inactive .form-hint,
+.tracker-panel--inactive .tracker-panel__subtitle {
+  color: #8b93ad;
+}
+
+.tracker-panel__status {
+  margin: 0.55rem 0 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #5a6a9a;
+}
+
 .form-field {
   display: flex;
   flex-direction: column;
