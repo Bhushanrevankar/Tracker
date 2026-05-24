@@ -10,4 +10,9 @@ export const EMPLOYEES = [
   'Sneha Desai',
   'Rahul Kapoor',
   'Meera Joshi',
+  'John Doe',
+  'Jane Smith',
+  'Amit Patel',
+  'Rajesh Kumar',
+  'Suresh Gupta',
 ];
