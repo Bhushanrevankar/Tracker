@@ -449,11 +449,111 @@ body {
   }
 }
 
-/* Admin Dashboard Styles */
-.admin-dashboard {
-  max-width: 1400px;
+/* App Header with Admin Button */
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-6);
+}
+
+.header-text {
+  flex: 1;
+}
+
+.admin-button {
+  padding: var(--space-3) var(--space-5);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-white);
+  background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-700));
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.admin-button:hover {
+  background: linear-gradient(135deg, var(--color-primary-700), var(--color-primary-800));
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Fullscreen Admin Dashboard */
+.admin-dashboard-fullscreen {
+  min-height: 100vh;
+  background: var(--color-gray-50);
+  padding: 0;
+}
+
+.admin-header-fullscreen {
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-gray-200);
+  padding: var(--space-6) var(--space-8);
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-header-content {
+  max-width: 1600px;
   margin: 0 auto;
-  padding: var(--space-6);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-6);
+}
+
+.admin-header-controls {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+}
+
+.back-to-tracker-btn {
+  padding: var(--space-3) var(--space-5);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-700);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.back-to-tracker-btn:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-gray-400);
+  transform: translateX(-2px);
+}
+
+.admin-content {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: var(--space-8);
+}
+
+/* Employee Detail Fullscreen */
+.employee-detail-fullscreen {
+  min-height: 100vh;
+  background: var(--color-gray-50);
+  padding: var(--space-6) var(--space-8);
+}
+
+.employee-detail-fullscreen .employee-detail-header {
+  max-width: 1600px;
+  margin: 0 auto var(--space-8);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.employee-detail-fullscreen .employee-detail-title-section {
+  flex: 1;
+  text-align: center;
 }
 
 .admin-header {
@@ -678,44 +778,32 @@ body {
   animation: spin 1s linear infinite;
 }
 
-/* Navigation Styles */
-.app-navigation {
-  display: flex;
-  gap: var(--space-4);
-  margin-bottom: var(--space-6);
-  border-bottom: 1px solid var(--color-gray-200);
-}
-
-.nav-button {
-  padding: var(--space-3) var(--space-5);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-600);
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.nav-button:hover {
-  color: var(--color-primary-600);
-}
-
-.nav-button--active {
-  color: var(--color-primary-600);
-  border-bottom-color: var(--color-primary-600);
-}
-
 /* Responsive Design for Admin Dashboard */
 @media (max-width: 900px) {
-  .admin-header {
+  .header-content {
     flex-direction: column;
     align-items: stretch;
+    gap: var(--space-4);
   }
 
-  .admin-controls {
-    min-width: auto;
+  .admin-button {
+    align-self: flex-end;
+  }
+
+  .admin-header-content {
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--space-4);
+  }
+
+  .admin-header-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  .admin-content {
+    padding: var(--space-4);
   }
 
   .admin-stats {
@@ -724,6 +812,20 @@ body {
 
   .employee-grid {
     grid-template-columns: 1fr;
+  }
+
+  .employee-detail-fullscreen {
+    padding: var(--space-4);
+  }
+
+  .employee-detail-fullscreen .employee-detail-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-4);
+  }
+
+  .employee-detail-fullscreen .employee-detail-title-section {
+    text-align: left;
   }
 }
 

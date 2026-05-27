@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { fetchEmployeeDetailedStats, fetchEmployeeWorkHistory } from '../utils/adminQueries';
 import { getTodayDateString } from '../utils/date';
 
-export default function EmployeeDetail({ employeeName, onBack }) {
+export default function EmployeeDetail({ employeeName, onBack, onBackToTracker }) {
   const [employeeData, setEmployeeData] = useState(null);
   const [workHistory, setWorkHistory] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,7 +23,7 @@ export default function EmployeeDetail({ employeeName, onBack }) {
       // Calculate date range
       const endDate = customEndDate || getTodayDateString();
       let startDate;
-      
+
       if (selectedDateRange === 'custom') {
         startDate = customStartDate;
       } else {
@@ -79,12 +79,15 @@ export default function EmployeeDetail({ employeeName, onBack }) {
 
   if (loading) {
     return (
-      <div className="employee-detail">
+      <div className="employee-detail-fullscreen">
         <div className="employee-detail-header">
           <button className="back-button" onClick={onBack}>
             ← Back to Dashboard
           </button>
           <h2 className="employee-detail-title">Loading...</h2>
+          <button className="back-to-tracker-btn" onClick={onBackToTracker}>
+            ← Back to Tracker
+          </button>
         </div>
         <div className="loading-spinner">
           <div className="spinner"></div>
@@ -95,12 +98,15 @@ export default function EmployeeDetail({ employeeName, onBack }) {
 
   if (error) {
     return (
-      <div className="employee-detail">
+      <div className="employee-detail-fullscreen">
         <div className="employee-detail-header">
           <button className="back-button" onClick={onBack}>
             ← Back to Dashboard
           </button>
           <h2 className="employee-detail-title">Error</h2>
+          <button className="back-to-tracker-btn" onClick={onBackToTracker}>
+            ← Back to Tracker
+          </button>
         </div>
         <div className="form-message form-message--error">
           {error}
@@ -110,7 +116,7 @@ export default function EmployeeDetail({ employeeName, onBack }) {
   }
 
   return (
-    <div className="employee-detail">
+    <div className="employee-detail-fullscreen">
       <div className="employee-detail-header">
         <button className="back-button" onClick={onBack}>
           ← Back to Dashboard
@@ -119,6 +125,9 @@ export default function EmployeeDetail({ employeeName, onBack }) {
           <h2 className="employee-detail-title">{employeeName}</h2>
           <p className="employee-detail-subtitle">Employee Performance Overview</p>
         </div>
+        <button className="back-to-tracker-btn" onClick={onBackToTracker}>
+          ← Back to Tracker
+        </button>
       </div>
 
       {/* Date Range Filter */}
